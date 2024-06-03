@@ -14,8 +14,12 @@ import {
   Button,
 } from "@mui/material";
 import BaseCard from "@/app/(DashboardLayout)/components/shared/BaseCard";
+import { useSearchParams } from "next/navigation";
 
 const Details = () => {
+  const params: any = useSearchParams();
+  const id = params.get("id");
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} lg={12}>

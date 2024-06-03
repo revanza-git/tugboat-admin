@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const products = [
   {
@@ -59,14 +59,18 @@ const products = [
 
 const ProductPerfomance = () => {
   const [anchorEl, setAnchorEl] = useState<null | Element>(null);
+  const [CurrentProductId, setCurrentProductId] = useState("");
 
-  const handleMenuClick = (event: React.MouseEvent) => {
+  const handleMenuClick = (id: string) => (event: React.MouseEvent) => {
     setAnchorEl(event.currentTarget);
+    setCurrentProductId(id);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  const router = useRouter();
 
   return (
     <BaseCard title="Monitoring">
@@ -160,21 +164,23 @@ const ProductPerfomance = () => {
                   <Typography fontSize="14px">${product.budget}k</Typography>
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={handleMenuClick}>
+                  <IconButton onClick={handleMenuClick(product.id)}>
                     <MoreVertIcon />
                   </IconButton>
 
                   <Menu
-                    id="simple-menu"
+                    id="item-menu"
                     anchorEl={anchorEl}
                     keepMounted
                     open={Boolean(anchorEl)}
                     onClose={handleMenuClose}
                   >
-                    <MenuItem>
-                      <Link href={`/details/page?id=${product.id}`}>
-                        <a>View</a>
-                      </Link>
+                    <MenuItem
+                      onClick={() =>
+                        router.push(`/details?id=${CurrentProductId}`)
+                      }
+                    >
+                      View
                     </MenuItem>
                     <MenuItem>Edit</MenuItem>
                     <MenuItem>Delete</MenuItem>
