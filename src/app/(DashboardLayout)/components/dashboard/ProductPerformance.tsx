@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Box,
@@ -9,8 +9,14 @@ import {
   TableRow,
   Chip,
   TableContainer,
+  IconButton,
+  Menu,
+  MenuItem,
+  Link,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import router, { useRouter } from "next/router";
 
 const products = [
   {
@@ -52,8 +58,18 @@ const products = [
 ];
 
 const ProductPerfomance = () => {
+  const [anchorEl, setAnchorEl] = useState<null | Element>(null);
+
+  const handleMenuClick = (event: React.MouseEvent) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
-    <BaseCard title="Basic Table">
+    <BaseCard title="Monitoring">
       <TableContainer
         sx={{
           width: {
@@ -94,6 +110,11 @@ const ProductPerfomance = () => {
               <TableCell align="right">
                 <Typography color="textSecondary" variant="h6">
                   Budget
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography color="textSecondary" variant="h6">
+                  Actions
                 </Typography>
               </TableCell>
             </TableRow>
@@ -137,6 +158,27 @@ const ProductPerfomance = () => {
                 </TableCell>
                 <TableCell align="right">
                   <Typography fontSize="14px">${product.budget}k</Typography>
+                </TableCell>
+                <TableCell>
+                  <IconButton onClick={handleMenuClick}>
+                    <MoreVertIcon />
+                  </IconButton>
+
+                  <Menu
+                    id="simple-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                  >
+                    <MenuItem>
+                      <Link href={`/details/page?id=${product.id}`}>
+                        <a>View</a>
+                      </Link>
+                    </MenuItem>
+                    <MenuItem>Edit</MenuItem>
+                    <MenuItem>Delete</MenuItem>
+                  </Menu>
                 </TableCell>
               </TableRow>
             ))}

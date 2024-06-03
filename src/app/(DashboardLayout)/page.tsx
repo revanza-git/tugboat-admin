@@ -1,8 +1,8 @@
-'use client';
-import { Grid} from "@mui/material";
+"use client";
+import { Grid } from "@mui/material";
 import ProductPerfomance from "@/app/(DashboardLayout)/components/dashboard/ProductPerformance";
 
-const Tables = () => {
+const Homes = () => {
   return (
     <Grid container spacing={0}>
       <Grid item xs={12} lg={12}>
@@ -12,4 +12,4 @@ const Tables = () => {
   );
 };
 
-export default Tables;
+export default Homes;

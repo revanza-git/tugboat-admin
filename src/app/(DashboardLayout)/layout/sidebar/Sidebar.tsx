@@ -1,7 +1,6 @@
 import { useMediaQuery, Box, Drawer } from "@mui/material";
 import DarkLogo from "../shared/logo/LogoDark";
 import SidebarItems from "./SidebarItems";
-import { SidebarProfile } from './SidebarProfile';
 
 interface ItemType {
   isMobileSidebarOpen: boolean;
@@ -51,17 +50,19 @@ const Sidebar = ({
             sx={{
               height: "100%",
             }}
-
           >
-            <Box sx={{
-               height: "calc(100vh - 70px)",
-               overflow: "auto", 
-            }}>
+            <Box
+              sx={{
+                height: "calc(100vh - 70px)",
+                overflow: "auto",
+              }}
+            >
               {/* ------------------------------------------- */}
               {/* Sidebar Items */}
               {/* ------------------------------------------- */}
-              <SidebarProfile />
-              <Box mt={3}><SidebarItems /></Box>
+              <Box mt={3}>
+                <SidebarItems />
+              </Box>
             </Box>
           </Box>
         </Drawer>
@@ -91,8 +92,9 @@ const Sidebar = ({
       {/* ------------------------------------------- */}
       {/* Sidebar For Mobile */}
       {/* ------------------------------------------- */}
-      <SidebarProfile />
-      <Box mt={3}><SidebarItems /></Box>
+      <Box mt={3}>
+        <SidebarItems />
+      </Box>
     </Drawer>
   );
 };
