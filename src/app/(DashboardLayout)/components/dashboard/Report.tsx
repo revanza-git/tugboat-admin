@@ -18,52 +18,48 @@ import BaseCard from "../shared/DashboardCard";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useRouter } from "next/navigation";
 
-const products = [
+const reports = [
   {
     id: "1",
-    name: "Sunil Joshi",
-    post: "Web Designer",
-    pname: "Elite Admin",
-    priority: "Low",
-    pbg: "primary.main",
-    budget: "3.9",
+    shipname: "Patra Tunda",
+    author: "Elite Admin",
+    status: "Melebihi",
+    pbg: "red",
+    tanggal: new Date().toLocaleDateString("en-GB").split('/').join('-'),
   },
   {
     id: "2",
-    name: "Andrew McDownland",
-    post: "Project Manager",
-    pname: "Real Homes WP Theme",
-    priority: "Medium",
-    pbg: "secondary.main",
-    budget: "24.5",
+    shipname: "Aqua Harbor",
+    author: "Real Homes WP Theme",
+    status: "Sesuai",
+    pbg: "success.main",
+    tanggal: new Date().toLocaleDateString("en-GB").split('/').join('-'),
   },
   {
     id: "3",
-    name: "Christopher Jamil",
-    post: "Project Manager",
-    pname: "MedicalPro WP Theme",
-    priority: "High",
-    pbg: "error.main",
-    budget: "12.8",
+    shipname: "Patra Tunda",
+    author: "MedicalPro WP Theme",
+    status: "Melebihi",
+    pbg: "red",
+    tanggal: new Date().toLocaleDateString("en-GB").split('/').join('-'),
   },
   {
     id: "4",
-    name: "Nirav Joshi",
-    post: "Frontend Engineer",
-    pname: "Hosting Press HTML",
-    priority: "Critical",
+    shipname: "Patra Tunda",
+    author: "Hosting Press HTML",
+    status: "Sesuai",
     pbg: "success.main",
-    budget: "2.4",
+    tanggal: new Date().toLocaleDateString("en-GB").split('/').join('-'),
   },
 ];
 
-const ProductPerfomance = () => {
+const Report = () => {
   const [anchorEl, setAnchorEl] = useState<null | Element>(null);
-  const [CurrentProductId, setCurrentProductId] = useState("");
+  const [CurrentReportId, setCurrentReportId] = useState("");
 
   const handleMenuClick = (id: string) => (event: React.MouseEvent) => {
     setAnchorEl(event.currentTarget);
-    setCurrentProductId(id);
+    setCurrentReportId(id);
   };
 
   const handleMenuClose = () => {
@@ -73,7 +69,7 @@ const ProductPerfomance = () => {
   const router = useRouter();
 
   return (
-    <BaseCard title="Monitoring">
+    <BaseCard title="Laporan Terbaru">
       <TableContainer
         sx={{
           width: {
@@ -93,27 +89,22 @@ const ProductPerfomance = () => {
             <TableRow>
               <TableCell>
                 <Typography color="textSecondary" variant="h6">
-                  Id
+                  Nama Kapal
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography color="textSecondary" variant="h6">
-                  Assigned
+                  Nama Pengisi Laporan
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography color="textSecondary" variant="h6">
-                  Name
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography color="textSecondary" variant="h6">
-                  Priority
+                  Status
                 </Typography>
               </TableCell>
               <TableCell align="right">
                 <Typography color="textSecondary" variant="h6">
-                  Budget
+                  Tanggal
                 </Typography>
               </TableCell>
               <TableCell>
@@ -124,28 +115,21 @@ const ProductPerfomance = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.name}>
-                <TableCell>
-                  <Typography fontSize="15px" fontWeight={500}>
-                    {product.id}
-                  </Typography>
-                </TableCell>
+            {reports.map((report) => (
+              <TableRow key={report.shipname}>
                 <TableCell>
                   <Box display="flex" alignItems="center">
                     <Box>
                       <Typography fontSize="14px" fontWeight={600}>
-                        {product.name}
+                        {report.shipname}
                       </Typography>
-                      <Typography color="textSecondary" fontSize="13px">
-                        {product.post}
-                      </Typography>
+                     
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Typography color="textSecondary" fontSize="14px">
-                    {product.pname}
+                    {report.author}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -153,18 +137,18 @@ const ProductPerfomance = () => {
                     sx={{
                       pl: "4px",
                       pr: "4px",
-                      backgroundColor: product.pbg,
+                      backgroundColor: report.pbg,
                       color: "#fff",
                     }}
                     size="small"
-                    label={product.priority}
+                    label={report.status}
                   ></Chip>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography fontSize="14px">${product.budget}k</Typography>
+                  <Typography fontSize="14px">{report.tanggal}</Typography>
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={handleMenuClick(product.id)}>
+                  <IconButton onClick={handleMenuClick(report.id)}>
                     <MoreVertIcon />
                   </IconButton>
 
@@ -177,12 +161,11 @@ const ProductPerfomance = () => {
                   >
                     <MenuItem
                       onClick={() =>
-                        router.push(`/details?id=${CurrentProductId}`)
+                        router.push(`/details?id=${CurrentReportId}`)
                       }
                     >
                       View
                     </MenuItem>
-                    <MenuItem>Edit</MenuItem>
                     <MenuItem>Delete</MenuItem>
                   </Menu>
                 </TableCell>
@@ -195,4 +178,4 @@ const ProductPerfomance = () => {
   );
 };
 
-export default ProductPerfomance;
+export default Report;
