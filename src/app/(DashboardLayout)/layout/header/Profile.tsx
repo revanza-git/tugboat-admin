@@ -76,39 +76,18 @@ const Profile = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         sx={{
           "& .MuiMenu-paper": {
-            width: "360px",
+            width: "100px",
             p: 2,
             pb: 2,
-            pt:0
+            pt: 0,
           },
         }}
       >
-
-        <Box pt={0}>
-
-          <List>
-            <ListItemButton component="a" href="#">
-              <ListItemText primary="My Profile" />
-            </ListItemButton>
-            <ListItemButton component="a" href="#">
-              <ListItemText primary="My Account" />
-            </ListItemButton>
-            <ListItemButton component="a" href="#">
-              <ListItemText primary="Change Password" />
-            </ListItemButton>
-            <ListItemButton component="a" href="#">
-              <ListItemText primary="My Task" />
-            </ListItemButton>
-          </List>
-
-        </Box>
-        <Divider />
         <Box mt={2}>
           <Button fullWidth variant="contained" color="primary">
             Logout
           </Button>
         </Box>
-
       </Menu>
     </Box>
   );

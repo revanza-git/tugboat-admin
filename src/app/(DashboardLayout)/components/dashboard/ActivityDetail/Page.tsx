@@ -31,7 +31,7 @@ const reports = [
     id: "1",
     waktuMulai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
     waktuSelesai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
-    durasi: "12",
+    durasi: "11",
     konsumsi: "150",
     aktivitas: "standby",
   },
@@ -40,7 +40,7 @@ const reports = [
     waktuMulai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
     waktuSelesai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
     durasi: "12",
-    konsumsi: "150",
+    konsumsi: "152",
     aktivitas: "dorong",
   },
   {
@@ -48,7 +48,7 @@ const reports = [
     waktuMulai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
     waktuSelesai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
     durasi: "12",
-    konsumsi: "150",
+    konsumsi: "153",
     aktivitas: "sailing",
   },
   {
@@ -56,7 +56,7 @@ const reports = [
     waktuMulai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
     waktuSelesai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
     durasi: "12",
-    konsumsi: "150",
+    konsumsi: "154",
     aktivitas: "standby",
   },
 ];
@@ -75,10 +75,23 @@ const Page = (id: any) => {
     setAnchorEl(null);
   };
 
-  const handleEditClick = (id: string) => {
-    setCurrentReportId(id);
-    setOpenDialog(true);
-    setAnchorEl(null);
+  const fetchReportData = (id: string) => {
+    const reportData = reports.find((report) => report.id === id);
+    // if (reportData) {
+    //   // Convert the date to the correct format
+    //   const start = new Date(
+    //     formValues.waktuMulai.split("/").reverse().join("-")
+    //   );
+    //   const waktuMulaiFormatted = start.toISOString().substring(0, 10);
+    //   const end = new Date(
+    //     formValues.waktuSelesai.split("/").reverse().join("-")
+    //   );
+    //   const waktuSelesaiFormatted = end.toISOString().substring(0, 10);
+
+    //   reportData.waktuMulai = waktuMulaiFormatted;
+    //   reportData.waktuSelesai = waktuSelesaiFormatted;
+    // }
+    return reportData;
   };
 
   const [formValues, setFormValues] = useState({
@@ -89,6 +102,21 @@ const Page = (id: any) => {
     durasi: "",
     aktivitas: "",
   });
+
+  const handleEditClick = (id: string) => {
+    const reportData = fetchReportData(id);
+    // Check if reportData is not undefined
+    if (reportData) {
+      // Update the formValues state
+      setFormValues(reportData);
+    } else {
+      // Handle the error here, e.g., set a default value or show an error message
+      console.error(`No report found with id: ${id}`);
+    }
+    setCurrentReportId(id);
+    setOpenDialog(true);
+    setAnchorEl(null);
+  };
 
   // Handle change in form fields
   const handleChangeDetail = (event: { target: { name: any; value: any } }) => {
@@ -221,8 +249,11 @@ const Page = (id: any) => {
                               name="waktuMulai"
                               type="date"
                               variant="outlined"
-                              defaultValue={report.waktuMulai}
+                              defaultValue={formValues.waktuMulai}
                               onChange={handleChangeDetail}
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
                             />
                           </FormControl>
                         </Box>
@@ -237,8 +268,11 @@ const Page = (id: any) => {
                               name="waktuSelesai"
                               type="date"
                               variant="outlined"
-                              defaultValue={report.waktuSelesai}
+                              defaultValue={formValues.waktuSelesai}
                               onChange={handleChangeDetail}
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
                             />
                           </FormControl>
                         </Box>
@@ -252,7 +286,7 @@ const Page = (id: any) => {
                               id="konsumsi"
                               name="konsumsi"
                               variant="outlined"
-                              defaultValue={report.konsumsi}
+                              defaultValue={formValues.konsumsi}
                               onChange={handleChangeDetail}
                             />
                           </FormControl>
@@ -265,7 +299,7 @@ const Page = (id: any) => {
                               id="durasi"
                               name="durasi"
                               variant="outlined"
-                              defaultValue={report.durasi}
+                              defaultValue={formValues.durasi}
                               onChange={handleChangeDetail}
                             />
                           </FormControl>
@@ -279,8 +313,8 @@ const Page = (id: any) => {
                               id="aktivitas"
                               name="aktivitas"
                               label="Nama Kapal"
-                              value={report.aktivitas}
                               onChange={handleChangeDetail}
+                              value={formValues.aktivitas}
                             >
                               <MenuItem value="standby">StandBy</MenuItem>
                               <MenuItem value="dorong">Dorong/Tarik</MenuItem>
