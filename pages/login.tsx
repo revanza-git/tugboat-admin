@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 
 import { useEffect, useRef, useState } from "react";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -56,7 +57,17 @@ export default function Login() {
   }, []);
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    // Handle login here
+    signIn("credentials", { username, password })
+      .then((result) => {
+        if (result && result.error) {
+          console.log(`Failed to sign in: ${result.error}`);
+        } else {
+          console.log("Successfully signed in");
+        }
+      })
+      .catch((error) => {
+        console.log(`An error occurred: ${error.message}`);
+      });
   };
 
   return (
@@ -94,8 +105,6 @@ export default function Login() {
               <TextField
                 label="Username"
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
                 margin="normal"
                 variant="outlined"
                 InputProps={{
@@ -108,8 +117,6 @@ export default function Login() {
               <TextField
                 label="Password"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 margin="normal"
                 variant="outlined"
                 ref={passwordFieldRef}
