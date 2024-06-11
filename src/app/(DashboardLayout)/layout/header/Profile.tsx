@@ -1,44 +1,25 @@
 import React, { useState } from "react";
-import { useTheme } from "@mui/material/styles";
-import Link from "next/link";
-import {
-  Box,
-  Menu,
-  Avatar,
-  Typography,
-  Divider,
-  Button,
-  IconButton,
-  ListItemButton,
-  List,
-  ListItemText,
-} from "@mui/material";
 
-import { Stack } from "@mui/system";
-import {
-  IconChevronDown,
-  IconCreditCard,
-  IconCurrencyDollar,
-  IconMail,
-  IconShield,
-} from "@tabler/icons-react";
+import { Box, Menu, Avatar, Button, IconButton } from "@mui/material";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Profile = () => {
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
   const [anchorEl2, setAnchorEl2] = useState(null);
+  const router = useRouter();
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
   };
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
+  const handleLogout = () => {
+    signOut();
+    router.push("/login");
+  };
 
-  const theme = useTheme();
-  const primary = theme.palette.primary.main;
-  const primarylight = theme.palette.primary.light;
-  const error = theme.palette.error.main;
-  const errorlight = theme.palette.error.light;
-  const success = theme.palette.success.main;
-  const successlight = theme.palette.success.light;
   return (
     <Box>
       <IconButton
@@ -55,7 +36,7 @@ const Profile = () => {
         onClick={handleClick2}
       >
         <Avatar
-          src={"/images/users/user2.jpg"}
+          src={"/images/users/user1.jpg"}
           alt={"ProfileImg"}
           sx={{
             width: 35,
@@ -83,8 +64,14 @@ const Profile = () => {
           },
         }}
       >
-        <Box mt={2}>
-          <Button fullWidth variant="contained" color="primary">
+        {!loading && session && <div>Welcome, {session.name}</div>}
+        <Box mt={3}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleLogout}
+          >
             Logout
           </Button>
         </Box>

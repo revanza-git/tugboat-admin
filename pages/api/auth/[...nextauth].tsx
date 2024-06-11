@@ -40,6 +40,7 @@ export default NextAuth({
       const { token, user } = params;
       if (user) {
         token.id = user.id;
+        token.name = user.name;
       }
       return token;
     },
@@ -52,6 +53,7 @@ export default NextAuth({
     }) {
       const { session, token } = params;
       session.userId = token.id;
+      session.name = token.name;
       return session;
     },
   },

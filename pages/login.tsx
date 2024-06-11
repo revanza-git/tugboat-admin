@@ -9,7 +9,8 @@ import {
 } from "@mui/material";
 
 import { useEffect, useRef, useState } from "react";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
+import router from "next/router";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -63,11 +64,18 @@ export default function Login() {
           console.log(`Failed to sign in: ${result.error}`);
         } else {
           console.log("Successfully signed in");
+          getSession().then((session) => {
+            console.log(session); // Log the session
+          });
+
+          router.push("/");
         }
       })
       .catch((error) => {
         console.log(`An error occurred: ${error.message}`);
       });
+
+    console.log(window.innerWidth, window.innerHeight);
   };
 
   return (
@@ -79,6 +87,7 @@ export default function Login() {
         height: "100vh",
         backgroundImage: "url('/images/backgrounds/nr-bg.png')",
         backgroundRepeat: "no-repeat",
+        backgroundSize: "contain", // Change this line
       }}
     >
       <StyledImg src="/images/logos/nr-logo.png" alt="Logo" />
