@@ -64,7 +64,7 @@ const Profile = () => {
           },
         }}
       >
-        {!loading && session && <div>Welcome, {session.name}</div>}
+        {!loading && session && <div>Welcome, {session?.user?.name ?? ""}</div>}
         <Box mt={3}>
           <Button
             fullWidth
