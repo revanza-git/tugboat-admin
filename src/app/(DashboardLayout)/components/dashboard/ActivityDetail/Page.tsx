@@ -36,6 +36,7 @@ interface DetailActivity {
   fuelConsumption: string;
   duration: string;
   note: string;
+  isOver: string;
   create_timestamp: string;
 }
 
@@ -77,6 +78,7 @@ const Page = (id: any) => {
     duration: "",
     fuelConsumption: "",
     note: "",
+    isOver: "",
   });
 
   const fetchReportData = (idDetailActivity: string) => {
@@ -195,6 +197,11 @@ const Page = (id: any) => {
                     Keterangan
                   </Typography>
                 </TableCell>
+                <TableCell>
+                  <Typography color="textSecondary" variant="h6">
+                    Status
+                  </Typography>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -228,6 +235,15 @@ const Page = (id: any) => {
                     <TableCell>
                       <Typography color="textSecondary" fontSize="14px">
                         {item.note}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography color="textSecondary" fontSize="14px">
+                        {item.isOver == "1" ? ( // Check if the value is "1"
+                          <Chip label="Over" color="error" size="small" />
+                        ) : (
+                          <Chip label="Normal" color="primary" size="small" />
+                        )}
                       </Typography>
                     </TableCell>
                     <TableCell>
