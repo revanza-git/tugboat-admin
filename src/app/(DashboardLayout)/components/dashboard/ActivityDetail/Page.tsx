@@ -22,49 +22,32 @@ import {
   FormLabel,
   TextField,
   Select,
+  Snackbar,
+  Alert,
+  AlertColor,
 } from "@mui/material";
 import BaseCard from "../../shared/DashboardCard";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-const reports = [
-  {
-    id: "1",
-    waktuMulai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
-    waktuSelesai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
-    durasi: "11",
-    konsumsi: "150",
-    aktivitas: "standby",
-  },
-  {
-    id: "2",
-    waktuMulai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
-    waktuSelesai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
-    durasi: "12",
-    konsumsi: "152",
-    aktivitas: "dorong",
-  },
-  {
-    id: "3",
-    waktuMulai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
-    waktuSelesai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
-    durasi: "12",
-    konsumsi: "153",
-    aktivitas: "sailing",
-  },
-  {
-    id: "4",
-    waktuMulai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
-    waktuSelesai: new Date().toLocaleDateString("en-GB").split("/").join("-"),
-    durasi: "12",
-    konsumsi: "154",
-    aktivitas: "standby",
-  },
-];
+interface DetailActivity {
+  idDetailActivity: string;
+  startTime: string;
+  finishTime: string;
+  fuelConsumption: string;
+  duration: string;
+  note: string;
+  create_timestamp: string;
+}
 
 const Page = (id: any) => {
+  const stringId = id.id;
   const [anchorEl, setAnchorEl] = useState<null | Element>(null);
   const [CurrentReportId, setCurrentReportId] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const [report, setReport] = useState<DetailActivity[]>([]);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const handleMenuClick = (id: string) => (event: React.MouseEvent) => {
     setAnchorEl(event.currentTarget);
@@ -75,33 +58,34 @@ const Page = (id: any) => {
     setAnchorEl(null);
   };
 
-  const fetchReportData = (id: string) => {
-    const reportData = reports.find((report) => report.id === id);
-    // if (reportData) {
-    //   // Convert the date to the correct format
-    //   const start = new Date(
-    //     formValues.waktuMulai.split("/").reverse().join("-")
-    //   );
-    //   const waktuMulaiFormatted = start.toISOString().substring(0, 10);
-    //   const end = new Date(
-    //     formValues.waktuSelesai.split("/").reverse().join("-")
-    //   );
-    //   const waktuSelesaiFormatted = end.toISOString().substring(0, 10);
+  useEffect(() => {
+    const fetchReport = async () => {
+      const response = await fetch(
+        `https://localhost:44317/Tugboat/detail-activity/${stringId}`
+      );
+      const data = await response.json();
+      setReport(data);
+    };
 
-    //   reportData.waktuMulai = waktuMulaiFormatted;
-    //   reportData.waktuSelesai = waktuSelesaiFormatted;
-    // }
-    return reportData;
-  };
+    fetchReport();
+  }, [id]);
 
   const [formValues, setFormValues] = useState({
-    id: "",
-    waktuMulai: "",
-    waktuSelesai: "",
-    konsumsi: "",
-    durasi: "",
-    aktivitas: "",
+    idDetailActivity: "",
+    startTime: "",
+    finishTime: "",
+    duration: "",
+    fuelConsumption: "",
+    note: "",
   });
+
+  const fetchReportData = (idDetailActivity: string) => {
+    const reportData = report.find(
+      (item) => item.idDetailActivity === idDetailActivity
+    );
+
+    return reportData;
+  };
 
   const handleEditClick = (id: string) => {
     const reportData = fetchReportData(id);
@@ -126,11 +110,44 @@ const Page = (id: any) => {
     });
   };
 
-  const handleSubmitDetail = (event: { preventDefault: () => void }) => {
+  const handleSubmitDetail = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     console.log(formValues);
+    try {
+      const response = await fetch(
+        `https://localhost:44317/Tugboat/detail-activity/${CurrentReportId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formValues), // replace `item` with the data you want to send
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update the activity detail");
+      }
+
+      setSnackbarMessage("Successfully updated the activity detail");
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
+      // Re-fetch the data
+      const fetchReport = async () => {
+        const response = await fetch(
+          `https://localhost:44317/Tugboat/detail-activity/${stringId}`
+        );
+        const data = await response.json();
+        setReport(data);
+      };
+
+      fetchReport();
+    } catch (error) {
+      setSnackbarMessage(`Failed to update the activity detail: ${error}`);
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    }
     setOpenDialog(false);
-    // Here you can handle your form submission logic
   };
 
   return (
@@ -181,165 +198,189 @@ const Page = (id: any) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {reports.map((report) => (
-                <TableRow key={report.id}>
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Box>
-                        <Typography fontSize="14px" fontWeight={600}>
-                          {report.waktuMulai}
-                        </Typography>
+              {report &&
+                report.map((item, index) => (
+                  <TableRow key={item.idDetailActivity}>
+                    <TableCell>
+                      <Box display="flex" alignItems="center">
+                        <Box>
+                          <Typography fontSize="14px" fontWeight={600}>
+                            {item.startTime}
+                          </Typography>
+                        </Box>
                       </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Typography color="textSecondary" fontSize="14px">
-                      {report.waktuSelesai}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center">
-                    <Typography color="textSecondary" fontSize="14px">
-                      {report.durasi}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center">
-                    <Typography color="textSecondary" fontSize="14px">
-                      {report.konsumsi}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography color="textSecondary" fontSize="14px">
-                      {report.aktivitas}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <IconButton onClick={handleMenuClick(report.id)}>
-                      <MoreVertIcon />
-                    </IconButton>
-
-                    <Menu
-                      id="item-menu"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={handleMenuClose}
-                    >
-                      <MenuItem
-                        onClick={() => handleEditClick(CurrentReportId)}
+                    </TableCell>
+                    <TableCell>
+                      <Typography color="textSecondary" fontSize="14px">
+                        {item.finishTime}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography color="textSecondary" fontSize="14px">
+                        {item.duration}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography color="textSecondary" fontSize="14px">
+                        {item.fuelConsumption}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography color="textSecondary" fontSize="14px">
+                        {item.note}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={handleMenuClick(item.idDetailActivity)}
                       >
-                        Edit
-                      </MenuItem>
-                      <MenuItem>Delete</MenuItem>
-                    </Menu>
-                  </TableCell>
-                  <Dialog
-                    open={openDialog}
-                    onClose={() => setOpenDialog(false)}
-                  >
-                    <form onSubmit={handleSubmitDetail}>
-                      <DialogTitle>Edit Report</DialogTitle>
-                      <DialogContent>
-                        <Box flexGrow={1}>
-                          <FormControl variant="outlined" fullWidth>
-                            <FormLabel component="legend">
-                              Waktu Mulai
-                            </FormLabel>
-                            <TextField
-                              id="waktuMulai"
-                              name="waktuMulai"
-                              type="date"
-                              variant="outlined"
-                              defaultValue={formValues.waktuMulai}
-                              onChange={handleChangeDetail}
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                            />
-                          </FormControl>
-                        </Box>
+                        <MoreVertIcon />
+                      </IconButton>
 
-                        <Box flexGrow={1}>
-                          <FormControl variant="outlined" fullWidth>
-                            <FormLabel component="legend">
-                              Waktu Selesai
-                            </FormLabel>
-                            <TextField
-                              id="waktuSelesai"
-                              name="waktuSelesai"
-                              type="date"
-                              variant="outlined"
-                              defaultValue={formValues.waktuSelesai}
-                              onChange={handleChangeDetail}
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                            />
-                          </FormControl>
-                        </Box>
-
-                        <Box flexGrow={1}>
-                          <FormControl variant="outlined" fullWidth>
-                            <FormLabel component="legend">
-                              Konsumsi BBM
-                            </FormLabel>
-                            <TextField
-                              id="konsumsi"
-                              name="konsumsi"
-                              variant="outlined"
-                              defaultValue={formValues.konsumsi}
-                              onChange={handleChangeDetail}
-                            />
-                          </FormControl>
-                        </Box>
-
-                        <Box flexGrow={1}>
-                          <FormControl variant="outlined" fullWidth>
-                            <FormLabel component="legend">Durasi</FormLabel>
-                            <TextField
-                              id="durasi"
-                              name="durasi"
-                              variant="outlined"
-                              defaultValue={formValues.durasi}
-                              onChange={handleChangeDetail}
-                            />
-                          </FormControl>
-                        </Box>
-
-                        <Box flexGrow={1}>
-                          <FormControl variant="outlined" fullWidth>
-                            <FormLabel component="legend">aktivitas</FormLabel>
-                            <Select
-                              labelId="aktivitas"
-                              id="aktivitas"
-                              name="aktivitas"
-                              label="Nama Kapal"
-                              onChange={handleChangeDetail}
-                              value={formValues.aktivitas}
-                            >
-                              <MenuItem value="standby">StandBy</MenuItem>
-                              <MenuItem value="dorong">Dorong/Tarik</MenuItem>
-                              <MenuItem value="sailing">Sailing</MenuItem>
-                            </Select>
-                          </FormControl>
-                        </Box>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button
-                          onClick={() => {
-                            setOpenDialog(false);
-                          }}
+                      <Menu
+                        id="item-menu"
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose}
+                      >
+                        <MenuItem
+                          onClick={() => handleEditClick(CurrentReportId)}
                         >
-                          Cancel
-                        </Button>
-                        <Button type="submit">Save</Button>
-                      </DialogActions>
-                    </form>
-                  </Dialog>
-                </TableRow>
-              ))}
+                          Edit
+                        </MenuItem>
+                        <MenuItem>Delete</MenuItem>
+                      </Menu>
+                    </TableCell>
+                    <Dialog
+                      open={openDialog}
+                      onClose={() => setOpenDialog(false)}
+                    >
+                      <form onSubmit={handleSubmitDetail}>
+                        <DialogTitle>Edit Report</DialogTitle>
+                        <DialogContent>
+                          <Box flexGrow={1}>
+                            <FormControl variant="outlined" fullWidth>
+                              <FormLabel component="legend">
+                                Waktu Mulai
+                              </FormLabel>
+                              <TextField
+                                id="startTime"
+                                name="startTime"
+                                type="time"
+                                variant="outlined"
+                                defaultValue={formValues.startTime}
+                                onChange={handleChangeDetail}
+                                InputLabelProps={{
+                                  shrink: true,
+                                }}
+                              />
+                            </FormControl>
+                          </Box>
+
+                          <Box flexGrow={1}>
+                            <FormControl variant="outlined" fullWidth>
+                              <FormLabel component="legend">
+                                Waktu Selesai
+                              </FormLabel>
+                              <TextField
+                                id="finishTime"
+                                name="finishTime"
+                                type="time"
+                                variant="outlined"
+                                defaultValue={formValues.finishTime}
+                                onChange={handleChangeDetail}
+                                InputLabelProps={{
+                                  shrink: true,
+                                }}
+                              />
+                            </FormControl>
+                          </Box>
+
+                          <Box flexGrow={1}>
+                            <FormControl variant="outlined" fullWidth>
+                              <FormLabel component="legend">
+                                Konsumsi BBM
+                              </FormLabel>
+                              <TextField
+                                id="fuelConsumption"
+                                name="fuelConsumption"
+                                variant="outlined"
+                                defaultValue={formValues.fuelConsumption}
+                                onChange={handleChangeDetail}
+                              />
+                            </FormControl>
+                          </Box>
+
+                          <Box flexGrow={1}>
+                            <FormControl variant="outlined" fullWidth>
+                              <FormLabel component="legend">
+                                Durasi(jam)
+                              </FormLabel>
+                              <TextField
+                                id="duration"
+                                name="duration"
+                                variant="outlined"
+                                type="time"
+                                defaultValue={formValues.duration}
+                                onChange={handleChangeDetail}
+                              />
+                            </FormControl>
+                          </Box>
+
+                          <Box flexGrow={1}>
+                            <FormControl variant="outlined" fullWidth>
+                              <FormLabel component="legend">
+                                aktivitas
+                              </FormLabel>
+                              <Select
+                                labelId="note"
+                                id="note"
+                                name="note"
+                                label="Nama Kapal"
+                                onChange={handleChangeDetail}
+                                value={formValues.note}
+                              >
+                                <MenuItem value="standby">StandBy</MenuItem>
+                                <MenuItem value="shifting">
+                                  Dorong/Tarik
+                                </MenuItem>
+                                <MenuItem value="sailing">Sailing</MenuItem>
+                              </Select>
+                            </FormControl>
+                          </Box>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={() => {
+                              setOpenDialog(false);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                          <Button type="submit">Save</Button>
+                        </DialogActions>
+                      </form>
+                    </Dialog>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={() => setOpenSnackbar(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Alert
+            onClose={() => setOpenSnackbar(false)}
+            severity={snackbarSeverity as AlertColor}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </div>
     </BaseCard>
   );

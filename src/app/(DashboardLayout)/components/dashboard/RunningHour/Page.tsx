@@ -6,17 +6,58 @@ import {
   FormControl,
   Box,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import BaseCard from "@/app/(DashboardLayout)/components/shared/BaseCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface EngineActivity {
+  idShipActivity: string;
+  mainEngine: string;
+  auxiliaryEngine1: string;
+  auxiliaryEngine2: string;
+  auxiliaryEngine3: string;
+}
 
 const Page = (id: any) => {
+  const [fetchedData, setFetchedData] = useState<EngineActivity>();
   const [formValues, setFormValues] = useState({
-    me: "20",
-    ae1: "2.5",
-    ae2: "3.5",
-    ae3: "2",
+    mainEngine: fetchedData ? fetchedData.mainEngine : "",
+    auxiliaryEngine1: fetchedData ? fetchedData.auxiliaryEngine1 : "",
+    auxiliaryEngine2: fetchedData ? fetchedData.auxiliaryEngine2 : "",
+    auxiliaryEngine3: fetchedData ? fetchedData.auxiliaryEngine3 : "",
   });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const idString = id.id;
+        const response = await fetch(
+          `https://localhost:44317/Tugboat/engine-activity/${idString}`
+        );
+        const data = await response.json();
+
+        setFetchedData(data);
+        setFormValues(data);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+
+    fetchData();
+
+    if (isSubmitted || isFailed) {
+      const timer = setTimeout(() => {
+        setIsSubmitted(false);
+        setIsFailed(false);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isSubmitted, isFailed]);
 
   // Handle change in form fields
   const handleChange = (event: { target: { name: any; value: any } }) => {
@@ -28,22 +69,45 @@ const Page = (id: any) => {
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    console.log(formValues);
-    // Here you can handle your form submission logic
+    setIsSubmitting(true);
+    const idString = id.id;
+    // Assuming `id` is available in the current scope
+    const url = `https://localhost:44317/Tugboat/engine-activity/${idString}`;
+
+    fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formValues),
+    })
+      .then(() => {
+        setIsSubmitting(false);
+      })
+      .then(() => {
+        setIsSubmitted(true);
+        // Handle the response data
+      })
+      .catch(() => {
+        setIsFailed(true);
+        // Handle the error
+      });
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <BaseCard title="Bahan Bakar">
+      <BaseCard title="Running Hour">
         <div>
           <Stack spacing={3} direction={{ xs: "column", sm: "row" }}>
             <Box flexGrow={1}>
               <FormControl variant="outlined" fullWidth>
                 <FormLabel component="legend">M/E (Jam)</FormLabel>
                 <TextField
-                  id="me"
+                  id="mainEngine"
+                  name="mainEngine"
                   variant="outlined"
-                  defaultValue={formValues.me}
+                  type="time"
+                  defaultValue={formValues.mainEngine}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -53,9 +117,11 @@ const Page = (id: any) => {
               <FormControl variant="outlined" fullWidth>
                 <FormLabel component="legend">A/E No.1 (Jam)</FormLabel>
                 <TextField
-                  id="ae1"
+                  id="auxiliaryEngine1"
+                  name="auxiliaryEngine1"
                   variant="outlined"
-                  defaultValue={formValues.ae1}
+                  type="time"
+                  defaultValue={formValues.auxiliaryEngine1}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -65,9 +131,11 @@ const Page = (id: any) => {
               <FormControl variant="outlined" fullWidth>
                 <FormLabel component="legend">A/E No.2 (Jam)</FormLabel>
                 <TextField
-                  id="ae2"
+                  id="auxiliaryEngine2"
+                  name="auxiliaryEngine2"
                   variant="outlined"
-                  defaultValue={formValues.ae2}
+                  type="time"
+                  defaultValue={formValues.auxiliaryEngine2}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -76,17 +144,42 @@ const Page = (id: any) => {
               <FormControl variant="outlined" fullWidth>
                 <FormLabel component="legend">A/E No.3 (Jam)</FormLabel>
                 <TextField
-                  id="ae3"
+                  id="auxiliaryEngine3"
+                  name="auxiliaryEngine3"
                   variant="outlined"
-                  defaultValue={formValues.ae3}
+                  type="time"
+                  defaultValue={formValues.auxiliaryEngine3}
                   onChange={handleChange}
                 />
               </FormControl>
             </Box>
           </Stack>
           <Box textAlign="right" mt={2}>
-            <Button type="submit" variant="contained" color="primary">
-              <span>Save</span>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isSubmitting}
+              color={
+                isSubmitting
+                  ? "warning"
+                  : isFailed
+                  ? "error"
+                  : isSubmitted
+                  ? "success"
+                  : "primary"
+              }
+              onClick={handleSubmit}
+              startIcon={isSubmitting && <CircularProgress size={20} />}
+            >
+              <span>
+                {isSubmitting
+                  ? "Loading..."
+                  : isFailed
+                  ? "Failed"
+                  : isSubmitted
+                  ? "Success"
+                  : "Save"}
+              </span>
             </Button>
           </Box>
         </div>

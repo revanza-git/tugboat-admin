@@ -6,16 +6,56 @@ import {
   FormControl,
   Box,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import BaseCard from "@/app/(DashboardLayout)/components/shared/BaseCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface FuelActivity {
+  idShipActivity: string;
+  reportRob: string;
+  activityRob: string;
+  filling: string;
+}
 
 const Page = (id: any) => {
+  const [fetchedData, setFetchedData] = useState<FuelActivity>();
   const [formValues, setFormValues] = useState({
-    robLaporan: "21111",
-    robHariKegiatan: "31111",
-    pengisian: "41111",
+    reportRob: fetchedData ? fetchedData.reportRob : "",
+    activityRob: fetchedData ? fetchedData.activityRob : "",
+    filling: fetchedData ? fetchedData.filling : "",
   });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const idString = id.id;
+        const response = await fetch(
+          `https://localhost:44317/Tugboat/fuel-activity/${idString}`
+        );
+        const data = await response.json();
+        console.log(data);
+        setFetchedData(data);
+        setFormValues(data);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+
+    fetchData();
+
+    if (isSubmitted || isFailed) {
+      const timer = setTimeout(() => {
+        setIsSubmitted(false);
+        setIsFailed(false);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isSubmitted, isFailed]);
 
   // Handle change in form fields
   const handleChange = (event: { target: { name: any; value: any } }) => {
@@ -27,8 +67,29 @@ const Page = (id: any) => {
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    console.log(formValues);
-    // Here you can handle your form submission logic
+    setIsSubmitting(true);
+    const idString = id.id;
+    // Assuming `id` is available in the current scope
+    const url = `https://localhost:44317/Tugboat/fuel-activity/${idString}`;
+
+    fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formValues),
+    })
+      .then(() => {
+        setIsSubmitting(false);
+      })
+      .then(() => {
+        setIsSubmitted(true);
+        // Handle the response data
+      })
+      .catch(() => {
+        setIsFailed(true);
+        // Handle the error
+      });
   };
 
   return (
@@ -40,9 +101,10 @@ const Page = (id: any) => {
               <FormControl variant="outlined" fullWidth>
                 <FormLabel component="legend">ROB Laporan (Liter)</FormLabel>
                 <TextField
-                  id="robLaporan"
+                  id="reportRob"
+                  name="reportRob"
                   variant="outlined"
-                  defaultValue={formValues.robLaporan}
+                  defaultValue={formValues.reportRob}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -54,9 +116,10 @@ const Page = (id: any) => {
                   ROB Hari Kegiatan (Liter)
                 </FormLabel>
                 <TextField
-                  id="robHariKegiatan"
+                  id="activityRob"
+                  name="activityRob"
                   variant="outlined"
-                  defaultValue={formValues.robHariKegiatan}
+                  defaultValue={formValues.activityRob}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -66,17 +129,41 @@ const Page = (id: any) => {
               <FormControl variant="outlined" fullWidth>
                 <FormLabel component="legend">Pengisian</FormLabel>
                 <TextField
-                  id="pengisian"
+                  id="filling"
+                  name="filling"
                   variant="outlined"
-                  defaultValue={formValues.pengisian}
+                  defaultValue={formValues.filling}
                   onChange={handleChange}
                 />
               </FormControl>
             </Box>
           </Stack>
           <Box textAlign="right" mt={2}>
-            <Button type="submit" variant="contained" color="primary">
-              <span>Save</span>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isSubmitting}
+              color={
+                isSubmitting
+                  ? "warning"
+                  : isFailed
+                  ? "error"
+                  : isSubmitted
+                  ? "success"
+                  : "primary"
+              }
+              onClick={handleSubmit}
+              startIcon={isSubmitting && <CircularProgress size={20} />}
+            >
+              <span>
+                {isSubmitting
+                  ? "Loading..."
+                  : isFailed
+                  ? "Failed"
+                  : isSubmitted
+                  ? "Success"
+                  : "Save"}
+              </span>
             </Button>
           </Box>
         </div>
