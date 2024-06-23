@@ -37,7 +37,7 @@ const Page = (id: any) => {
           `https://localhost:44317/Tugboat/fuel-activity/${idString}`
         );
         const data = await response.json();
-        console.log(data);
+
         setFetchedData(data);
         setFormValues(data);
       } catch (error) {
@@ -71,6 +71,7 @@ const Page = (id: any) => {
     const idString = id.id;
     // Assuming `id` is available in the current scope
     const url = `https://localhost:44317/Tugboat/fuel-activity/${idString}`;
+    console.log(url);
 
     fetch(url, {
       method: "PUT",

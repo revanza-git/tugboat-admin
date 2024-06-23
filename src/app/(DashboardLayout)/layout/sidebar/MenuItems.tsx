@@ -17,7 +17,7 @@ import { uniqueId } from "lodash";
 const Menuitems = [
   {
     id: uniqueId(),
-    title: "Dashboard",
+    title: "Tugboat",
     icon: IconHome,
     href: "/",
   },

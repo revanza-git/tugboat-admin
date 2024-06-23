@@ -3,8 +3,6 @@ import React, { useState } from "react";
 import { IconButton, Input, Box, Drawer } from "@mui/material";
 import { IconSearch, IconX } from "@tabler/icons-react";
 
-
-
 const Search = () => {
   // drawer top
   const [showDrawer2, setShowDrawer2] = useState(false);
@@ -20,9 +18,9 @@ const Search = () => {
         aria-haspopup="true"
         onClick={() => setShowDrawer2(true)}
         size="large"
-        sx={{color:'#fff'}}
+        sx={{ color: "#fff" }}
       >
-        <IconSearch height="22" width="22" strokeWidth="1.5"  />
+        <IconSearch height="22" width="22" strokeWidth="1.5" />
       </IconButton>
       <Drawer
         anchor="top"
@@ -41,9 +39,7 @@ const Search = () => {
               ml: "auto",
             }}
           >
-            <IconButton
-              onClick={handleDrawerClose2}
-            >
+            <IconButton onClick={handleDrawerClose2}>
               <IconX height="20" width="20" />
             </IconButton>
           </Box>
@@ -54,4 +50,3 @@ const Search = () => {
 };
 
 export default Search;
-

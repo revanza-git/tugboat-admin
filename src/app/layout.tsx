@@ -11,20 +11,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
-
-  useEffect(() => {
-    getSession().then((session) => {
-      if (session) {
-        // If the user is logged in, redirect to the dashboard
-        router.push("/");
-      } else {
-        // If the user is not logged in, redirect to the login page
-        router.push("/login");
-      }
-    });
-  }, []);
-
   return (
     <html lang="en">
       <body>

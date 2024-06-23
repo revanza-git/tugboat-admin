@@ -1,6 +1,6 @@
 "use client";
 import { Grid } from "@mui/material";
-import Report from "@/app/(DashboardLayout)/components/dashboard/Report";
+import Report from "@/app/(DashboardLayout)/components/dashboard/Report/Page";
 
 const Homes = () => {
   return (

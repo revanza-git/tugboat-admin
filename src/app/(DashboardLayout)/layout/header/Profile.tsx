@@ -36,7 +36,7 @@ const Profile = () => {
         onClick={handleClick2}
       >
         <Avatar
-          src={"/images/users/user1.jpg"}
+          src={"/images/users/1.jpg"}
           alt={"ProfileImg"}
           sx={{
             width: 35,
@@ -57,7 +57,9 @@ const Profile = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         sx={{
           "& .MuiMenu-paper": {
-            width: "100px",
+            minWidth: "150px", // Set a minimum width
+            maxWidth: "300px", // Set a maximum width
+            width: "auto", // Let the width adjust automatically
             p: 2,
             pb: 2,
             pt: 0,

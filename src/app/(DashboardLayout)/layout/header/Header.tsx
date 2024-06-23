@@ -66,7 +66,7 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
           <IconMenu2 width="22" height="22" />
         </IconButton>
 
-        <Search />
+        {/* <Search /> */}
 
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">

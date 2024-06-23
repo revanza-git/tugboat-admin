@@ -1,9 +1,11 @@
 "use client";
 import { styled, Container, Box, useTheme } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "@/app/(DashboardLayout)/layout/header/Header";
 import Sidebar from "@/app/(DashboardLayout)/layout/sidebar/Sidebar";
 import Footer from "./layout/footer/page";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const MainWrapper = styled("div")(() => ({
   // display: "flex",
@@ -32,6 +34,20 @@ export default function RootLayout({
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const theme = useTheme();
+  const { data: session, status } = useSession();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status !== "loading" && !session) {
+      router.push("/login"); // redirect to login if user is not authenticated
+    }
+  }, [session, status, router]);
+
+  if (status === "loading") return <div>Loading...</div>;
+  // If user is not authenticated, don't render the MainWrapper
+  if (!session) return null; // Loading state
+
   return (
     <MainWrapper className="mainwrapper">
       {/* ------------------------------------------- */}
