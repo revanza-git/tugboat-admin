@@ -1,5 +1,6 @@
 // api.ts
-const BASE_URL = "https://localhost:44317/Tugboat/detail-activity";
+const BASE_URL = "https://localhost:44317/Tugboat/tank-activity";
+const TANK_URL = "https://localhost:44317/Tugboat/tanks";
 
 export const fetchReport = async (id: string) => {
   const response = await fetch(`${BASE_URL}/${id}`);
@@ -11,6 +12,14 @@ export const fetchReport = async (id: string) => {
 
 export const fetchReportDetail = async (id: string) => {
   const response = await fetch(`${BASE_URL}/detail/${id}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch report");
+  }
+  return response.json();
+};
+
+export const fetchTankData = async () => {
+  const response = await fetch(`${TANK_URL}`);
   if (!response.ok) {
     throw new Error("Failed to fetch report");
   }
@@ -31,7 +40,7 @@ export const updateReport = async (id: string, data: any) => {
   return response;
 };
 
-export const addActivityDetail = async (data: any) => {
+export const addTankDetail = async (data: any) => {
   // Replace this URL with your actual API endpoint
   const response = await fetch(`${BASE_URL}`, {
     method: "POST",
@@ -44,19 +53,19 @@ export const addActivityDetail = async (data: any) => {
   return response;
 };
 
-export const deleteDetailActivity = async (idDetailActivity: any) => {
-  const url = `${BASE_URL}/del/${idDetailActivity}`;
+export const deleteTankActivity = async (idTankActivity: any) => {
+  const url = `${BASE_URL}/del/${idTankActivity}`;
   try {
     const response = await fetch(url, {
       method: "DELETE", // Specify the method
     });
     if (!response.ok) {
-      throw new Error("Failed to delete the Detail activity");
+      throw new Error("Failed to delete the Tank activity");
     }
-    console.log("Detail activity deleted successfully");
+    console.log("Tank activity deleted successfully");
     // Handle success response
   } catch (error) {
-    console.error("Error deleting Detail activity:", error);
+    console.error("Error deleting Tank activity:", error);
     // Handle errors
   }
 };

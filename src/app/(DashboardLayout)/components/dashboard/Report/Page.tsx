@@ -15,6 +15,7 @@ const Page = () => {
     searchInput,
     setSearchInput,
     fetchData,
+    handleDeleteShipActivity,
   } = useTugboatData();
 
   return (
@@ -29,6 +30,7 @@ const Page = () => {
           tugboatActivities={tugboatActivities}
           shipData={shipData}
           router={router}
+          handleDeleteShipActivity={handleDeleteShipActivity}
         />
       </>
     </BaseCard>

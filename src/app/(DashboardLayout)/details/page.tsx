@@ -6,6 +6,7 @@ import ActivityReports from "@/app/(DashboardLayout)/components/dashboard/Activi
 import DataKapal from "@/app/(DashboardLayout)/components/dashboard/DataKapal/Page";
 import BahanBakar from "@/app/(DashboardLayout)/components/dashboard/BahanBakar/Page"; // Add this import
 import RunningHour from "@/app/(DashboardLayout)/components/dashboard/RunningHour/Page"; // Add this import
+import TankActivity from "@/app/(DashboardLayout)/components/dashboard/Tank/Page"; // Add this import
 
 const Details = () => {
   const router = useRouter();
@@ -31,6 +32,9 @@ const Details = () => {
 
       <Grid item xs={12} lg={12}>
         <RunningHour id={id} />
+      </Grid>
+      <Grid item xs={12} lg={12}>
+        <TankActivity id={id} />
       </Grid>
     </Grid>
   );

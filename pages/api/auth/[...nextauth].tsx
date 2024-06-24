@@ -81,7 +81,6 @@ export default NextAuth({
             return Promise.resolve(null);
           }
         } catch (error) {
-          console.error(error);
           return Promise.resolve(null);
         }
       },

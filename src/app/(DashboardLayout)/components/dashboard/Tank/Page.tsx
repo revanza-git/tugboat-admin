@@ -1,50 +1,73 @@
-// Page.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import BaseCard from "../../shared/BaseCard";
+import { useTankData } from "./useTankData";
+import ReportTable from "./ReportTable";
+import { addTankDetail, fetchTankData } from "./api";
 import {
-  Snackbar,
   Alert,
   AlertColor,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   FormLabel,
-  TextField,
-  Select,
   MenuItem,
+  Select,
+  Snackbar,
+  TextField,
 } from "@mui/material";
-import BaseCard from "../../shared/DashboardCard";
-import ReportTable from "./ReportTable";
-import { useReportData } from "./useReportData";
-import { addActivityDetail } from "./api";
+
+type ReportTank = {
+  idTank: string;
+  soundingTankCode: string;
+  soundingTankName: string;
+  size: string;
+  usage: string;
+  idShip: string;
+};
 
 const Page = ({ id }: { id: string }) => {
+  const [formData, setFormData] = useState({
+    idShipActivity: id,
+    soundingTankCode: "",
+    usage: "",
+  });
+
   const {
     report,
-    loading: isLoading,
+    loading,
     error,
     updateReportData: updateReport,
-    handleDeleteDetailActivity,
-  } = useReportData(id);
+    fetchData,
+    handleDeleteTankActivity,
+  } = useTankData(id);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] =
     useState<AlertColor>("success");
   const [openDialog, setOpenDialog] = useState(false);
-  // Step 1: Define the state for form data
-  const [formData, setFormData] = useState({
-    idShipActivity: id,
-    startTime: "",
-    finishTime: "",
-    fuelConsumption: "",
-    duration: "",
-    note: "standby",
-  });
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  // Add to the existing state definitions
   const [formError, setFormError] = useState(false);
+  const [tanks, setTanks] = useState<ReportTank[]>([]);
+
+  useEffect(() => {
+    const fetchAndSetTanks = async () => {
+      try {
+        const fetchedTanks = await fetchTankData();
+        setTanks(fetchedTanks);
+      } catch (error) {
+        console.error("Failed to fetch tanks data:", error);
+        setSnackbarMessage("Failed to fetch tanks data. Please try again.");
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
+      }
+    };
+
+    if (openDialog) {
+      fetchAndSetTanks();
+    }
+  }, [openDialog]);
 
   // Step 2: Update handleChangeDetail function
   const handleChangeDetail = (event: { target: { name: any; value: any } }) => {
@@ -78,7 +101,7 @@ const Page = ({ id }: { id: string }) => {
     setOpenDialog(false);
   };
 
-  const handleAddActivityDetail = async () => {
+  const handleAddTankDetail = async () => {
     // Check if all fields are filled
     const isFormComplete = Object.values(formData).every(
       (value) => value.trim() !== ""
@@ -88,10 +111,10 @@ const Page = ({ id }: { id: string }) => {
       return; // Prevent further execution
     }
     try {
-      const response = await addActivityDetail(formData);
+      const response = await addTankDetail(formData);
       if (response.ok) {
+        fetchData();
         handleUpdateSuccess(); // Call this function if the addition is successful
-        setRefreshTrigger((prev) => prev + 1); // Increment the trigger
       } else {
         throw new Error("Failed to add activity detail. Please try again.");
       }
@@ -102,11 +125,8 @@ const Page = ({ id }: { id: string }) => {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-
   return (
-    <BaseCard title="Detail Kegiatan">
+    <BaseCard title="Aktivitas Tank">
       <>
         <div
           style={{
@@ -130,8 +150,7 @@ const Page = ({ id }: { id: string }) => {
           updateReport={updateReport}
           onUpdateSuccess={handleUpdateSuccess}
           onUpdateError={handleUpdateError}
-          onDeleteDetailActivity={handleDeleteDetailActivity}
-          refreshTrigger={refreshTrigger} // Pass the trigger as a prop
+          onDeleteTankActivity={handleDeleteTankActivity}
         />
         <Snackbar
           open={openSnackbar}
@@ -151,71 +170,35 @@ const Page = ({ id }: { id: string }) => {
           <DialogTitle>Tambah Data</DialogTitle>
           <DialogContent>
             <FormControl variant="outlined" fullWidth margin="normal">
-              <FormLabel>Waktu Mulai</FormLabel>
-              <TextField
-                name="startTime"
-                type="time"
-                onChange={handleChangeDetail}
-                InputLabelProps={{ shrink: true }}
-                error={formError && !formData.startTime}
-                helperText={
-                  formError && !formData.startTime
-                    ? "This field is required"
-                    : ""
-                }
-              />
-            </FormControl>
-            <FormControl variant="outlined" fullWidth margin="normal">
-              <FormLabel>Waktu Selesai</FormLabel>
-              <TextField
-                name="finishTime"
-                type="time"
-                onChange={handleChangeDetail}
-                InputLabelProps={{ shrink: true }}
-                error={formError && !formData.finishTime}
-                helperText={
-                  formError && !formData.finishTime
-                    ? "This field is required"
-                    : ""
-                }
-              />
-            </FormControl>
-            <FormControl variant="outlined" fullWidth margin="normal">
-              <FormLabel>Konsumsi BBM</FormLabel>
-              <TextField name="fuelConsumption" onChange={handleChangeDetail} />
-            </FormControl>
-            <FormControl variant="outlined" fullWidth margin="normal">
-              <FormLabel>Durasi(jam)</FormLabel>
-              <TextField
-                name="duration"
-                type="time"
-                onChange={handleChangeDetail}
-                InputLabelProps={{ shrink: true }}
-                error={formError && !formData.duration}
-                helperText={
-                  formError && !formData.duration
-                    ? "This field is required"
-                    : ""
-                }
-              />
-            </FormControl>
-            <FormControl variant="outlined" fullWidth margin="normal">
-              <FormLabel>aktivitas</FormLabel>
+              <FormLabel>Nama Tank</FormLabel>
               <Select
-                name="note"
+                name="soundingTankCode"
+                value={formData.soundingTankCode}
                 onChange={handleChangeDetail}
-                value={formData.note}
-                displayEmpty
               >
-                <MenuItem value="standby">StandBy</MenuItem>
-                <MenuItem value="shifting">Dorong/Tarik</MenuItem>
-                <MenuItem value="sailing">Sailing</MenuItem>
+                {tanks.map((tank) => (
+                  <MenuItem
+                    key={tank.soundingTankCode}
+                    value={tank.soundingTankCode}
+                  >
+                    {tank.soundingTankName}
+                  </MenuItem>
+                ))}
               </Select>
+            </FormControl>
+            <FormControl variant="outlined" fullWidth margin="normal">
+              <FormLabel>Penggunaan</FormLabel>
+              <TextField
+                name="usage"
+                value={formData.usage}
+                onChange={handleChangeDetail}
+                InputLabelProps={{ shrink: true }}
+              />
             </FormControl>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleDialogClose}>Cancel</Button>
-            <Button onClick={handleAddActivityDetail}>Add</Button>
+            <Button onClick={handleAddTankDetail}>Add</Button>
           </DialogActions>
         </Dialog>
       </>

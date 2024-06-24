@@ -8,7 +8,6 @@ import {
   TableRow,
   Typography,
   IconButton,
-  Chip,
   Menu,
   MenuItem,
   Dialog,
@@ -25,18 +24,25 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PropTypes from "prop-types";
-import { fetchReport, fetchReportDetail, updateReport } from "./api";
-import { useReportData } from "./useReportData";
+import { fetchTankData, fetchReportDetail } from "./api";
+import { set } from "lodash";
 
 type ReportItem = {
   idDetailActivity: string;
-  startTime: string;
-  finishTime: string;
-  fuelConsumption: string;
-  duration: string;
-  note: string;
-  isOver: boolean;
-  create_timestamp: string;
+  soundingTankCode: string;
+  soundingTankName: string;
+  size: string;
+  usage: string;
+  idShip: string;
+};
+
+type ReportTank = {
+  idTank: string;
+  soundingTankCode: string;
+  soundingTankName: string;
+  size: string;
+  usage: string;
+  idShip: string;
 };
 
 interface ReportTableProps {
@@ -45,52 +51,34 @@ interface ReportTableProps {
   updateReport: (id: string, data: any) => Promise<void>;
   onUpdateSuccess: () => void;
   onUpdateError: (error: Error) => void;
-  onDeleteDetailActivity: (
+  onDeleteTankActivity: (
     idDetailActivity: string,
     idShipActivity: string
   ) => void;
-  refreshTrigger: any; // Added refreshTrigger prop
 }
 
 const ReportTable = ({
   idShipActivity,
-  report: initialReport,
+  report,
   updateReport,
   onUpdateSuccess,
   onUpdateError,
-  onDeleteDetailActivity,
-  refreshTrigger,
+  onDeleteTankActivity,
 }: ReportTableProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [currentReportId, setCurrentReportId] = useState("");
   const [formValues, setFormValues] = useState({
-    startTime: "",
-    finishTime: "",
-    fuelConsumption: "",
-    duration: "",
-    note: "",
+    idShipActivity: idShipActivity,
+    soundTankCode: "",
+    usage: "",
+    size: "",
+    weight: "",
   });
-  // Use state to manage the report data
-  const [report, setReport] = useState<ReportItem[]>(initialReport);
 
+  //   const [report, setReport] = useState<ReportItem[]>(initialReport);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteReportId, setDeleteReportId] = useState("");
-
-  // Define an async function to fetch updated report data
-  const fetchUpdatedReport = async () => {
-    try {
-      const updatedReport = await fetchReport(idShipActivity);
-      setReport(updatedReport);
-    } catch (error) {
-      console.error("Failed to fetch updated report data:", error);
-    }
-  };
-
-  useEffect(() => {
-    // Call the fetchUpdatedReport function
-    fetchUpdatedReport();
-  }, [refreshTrigger]); // Dependency array includes refreshTrigger to re-run effect when it changes
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -105,7 +93,6 @@ const ReportTable = ({
   const handleEditClick = async (id: string) => {
     try {
       const reportData = await fetchReportDetail(id);
-
       setFormValues({ ...reportData });
 
       setOpenDialog(true);
@@ -124,14 +111,13 @@ const ReportTable = ({
     event.preventDefault();
     try {
       await updateReport(currentReportId, formValues);
-      fetchUpdatedReport();
+
       onUpdateSuccess();
       setOpenDialog(false);
     } catch (error) {
       if (error instanceof Error) {
         onUpdateError(error);
       } else {
-        // Handle the case where the caught value is not an Error instance
         onUpdateError(new Error("An unknown error occurred"));
       }
     }
@@ -141,19 +127,16 @@ const ReportTable = ({
   const handleDeleteClick = (reportId: string) => {
     setDeleteReportId(reportId);
     setOpenDeleteDialog(true);
-    handleMenuClose(); // Close the menu
+    handleMenuClose();
   };
 
   // Function to confirm deletion
   const handleConfirmDelete = async () => {
     try {
-      await onDeleteDetailActivity(deleteReportId, idShipActivity);
-      setOpenDeleteDialog(false); // Close the confirmation dialog
-      fetchUpdatedReport(); // Refresh the report list or use another method to update the UI
-      // Optionally, show a success notification here
+      onDeleteTankActivity(deleteReportId, idShipActivity);
+      setOpenDeleteDialog(false);
     } catch (error) {
       console.error("Failed to delete report data:", error);
-      // Optionally, show an error notification here
     }
   };
 
@@ -165,32 +148,22 @@ const ReportTable = ({
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Waktu Mulai</TableCell>
-              <TableCell>Waktu Selesai</TableCell>
-              <TableCell>Durasi</TableCell>
-              <TableCell>Konsumsi BBM</TableCell>
-              <TableCell>Keterangan</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Nama Tank</TableCell>
+              <TableCell>Penggunaan(liter)</TableCell>
+              <TableCell>Size(cm)</TableCell>
+              <TableCell>Weight(kg)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {report.map((item: any) => (
-              <TableRow key={item.idDetailActivity}>
-                <TableCell>{item.startTime}</TableCell>
-                <TableCell>{item.finishTime}</TableCell>
-                <TableCell align="center">{item.duration}</TableCell>
-                <TableCell align="center">{item.fuelConsumption}</TableCell>
-                <TableCell>{item.note}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={item.isOver == true ? "Over" : "Normal"}
-                    color={item.isOver == true ? "error" : "primary"}
-                    size="small"
-                  />
-                </TableCell>
+              <TableRow key={item.idTankActivity}>
+                <TableCell>{item.soundingTankName}</TableCell>
+                <TableCell>{item.usage}</TableCell>
+                <TableCell>{item.size}</TableCell>
+                <TableCell>{item.weight}</TableCell>
                 <TableCell>
                   <IconButton
-                    onClick={(e) => handleMenuClick(e, item.idDetailActivity)}
+                    onClick={(e) => handleMenuClick(e, item.idTankActivity)}
                   >
                     <MoreVertIcon />
                   </IconButton>
@@ -221,7 +194,7 @@ const ReportTable = ({
         >
           <DialogTitle>Confirm Delete</DialogTitle>
           <DialogContent>
-            Are you sure you want to delete this report item?
+            Are you sure you want to delete this tank item?
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpenDeleteDialog(false)}>Cancel</Button>
@@ -253,56 +226,48 @@ const EditReportForm = ({
 }: {
   formValues: any;
   handleChangeDetail: (event: { target: { name: any; value: any } }) => void;
-}) => (
-  <>
-    <FormControl variant="outlined" fullWidth margin="normal">
-      <FormLabel>Waktu Mulai</FormLabel>
-      <TextField
-        name="startTime"
-        type="time"
-        value={formValues.startTime}
-        onChange={handleChangeDetail}
-        InputLabelProps={{ shrink: true }}
-      />
-    </FormControl>
-    <FormControl variant="outlined" fullWidth margin="normal">
-      <FormLabel>Waktu Selesai</FormLabel>
-      <TextField
-        name="finishTime"
-        type="time"
-        value={formValues.finishTime}
-        onChange={handleChangeDetail}
-        InputLabelProps={{ shrink: true }}
-      />
-    </FormControl>
-    <FormControl variant="outlined" fullWidth margin="normal">
-      <FormLabel>Konsumsi BBM</FormLabel>
-      <TextField
-        name="fuelConsumption"
-        value={formValues.fuelConsumption}
-        onChange={handleChangeDetail}
-      />
-    </FormControl>
-    <FormControl variant="outlined" fullWidth margin="normal">
-      <FormLabel>Durasi(jam)</FormLabel>
-      <TextField
-        name="duration"
-        type="time"
-        value={formValues.duration}
-        onChange={handleChangeDetail}
-        InputLabelProps={{ shrink: true }}
-      />
-    </FormControl>
-    <FormControl variant="outlined" fullWidth margin="normal">
-      <FormLabel>aktivitas</FormLabel>
-      <Select name="note" value={formValues.note} onChange={handleChangeDetail}>
-        <MenuItem value="standby">StandBy</MenuItem>
-        <MenuItem value="shifting">Dorong/Tarik</MenuItem>
-        <MenuItem value="sailing">Sailing</MenuItem>
-      </Select>
-    </FormControl>
-  </>
-);
+}) => {
+  const [tanks, setTanks] = useState<ReportTank[]>([]);
+
+  useEffect(() => {
+    fetchTankData()
+      .then((data) => {
+        console.log(data);
+        setTanks(data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch tank data", error);
+      });
+  }, []);
+
+  return (
+    <>
+      <FormControl variant="outlined" fullWidth margin="normal">
+        <FormLabel>Nama Tank</FormLabel>
+        <Select
+          name="soundingTankCode"
+          value={formValues.soundingTankCode}
+          onChange={handleChangeDetail}
+        >
+          {tanks.map((tank) => (
+            <MenuItem key={tank.soundingTankCode} value={tank.soundingTankCode}>
+              {tank.soundingTankName}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <FormControl variant="outlined" fullWidth margin="normal">
+        <FormLabel>Penggunaan</FormLabel>
+        <TextField
+          name="usage"
+          value={formValues.usage}
+          onChange={handleChangeDetail}
+          InputLabelProps={{ shrink: true }}
+        />
+      </FormControl>
+    </>
+  );
+};
 
 ReportTable.propTypes = {
   report: PropTypes.array.isRequired,

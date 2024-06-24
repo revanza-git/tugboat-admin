@@ -89,7 +89,11 @@ export default function Login() {
             setAuthFailed(true);
           } else {
             getSession().then((session) => {
-              router.push("/");
+              if (session === null) {
+                setAuthFailed(true);
+              } else {
+                router.push("/");
+              }
             });
           }
         })
@@ -121,7 +125,11 @@ export default function Login() {
         <Grid item xs={12} sm={8} md={6} lg={4}>
           <StyledCard>
             {authFailed && (
-              <Typography color="error">
+              <Typography
+                color="error"
+                align="center"
+                style={{ width: "100%" }}
+              >
                 Failed to authenticate. Please try again.
               </Typography>
             )}
