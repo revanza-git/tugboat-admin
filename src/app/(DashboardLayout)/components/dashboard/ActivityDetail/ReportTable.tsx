@@ -1,5 +1,5 @@
 // ReportTable.tsx
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -77,20 +77,20 @@ const ReportTable = ({
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteReportId, setDeleteReportId] = useState("");
 
-  // Define an async function to fetch updated report data
-  const fetchUpdatedReport = async () => {
+  // Wrap the definition of 'fetchUpdatedReport' in its own useCallback() Hook
+  const fetchUpdatedReport = useCallback(async () => {
     try {
       const updatedReport = await fetchReport(idShipActivity);
       setReport(updatedReport);
     } catch (error) {
       console.error("Failed to fetch updated report data:", error);
     }
-  };
+  }, [idShipActivity]); // Include all dependencies here
 
   useEffect(() => {
     // Call the fetchUpdatedReport function
     fetchUpdatedReport();
-  }, [refreshTrigger]); // Dependency array includes refreshTrigger to re-run effect when it changes
+  }, [refreshTrigger, fetchUpdatedReport]); // Dependency array now correctly includes the memoized fetchUpdatedReport
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,

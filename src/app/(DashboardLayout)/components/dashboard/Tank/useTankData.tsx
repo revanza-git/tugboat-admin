@@ -6,12 +6,14 @@ import {
   deleteTankActivity,
   addTankDetail,
 } from "./api";
+import { useCallback } from "react";
 
 export const useTankData = (id: string) => {
   const [report, setReport] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const fetchData = async () => {
+
+  const fetchData = useCallback(async () => {
     try {
       const data = await fetchReport(id);
       setReport(data);
@@ -20,10 +22,11 @@ export const useTankData = (id: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]); // Dependencies for useCallback
+
   useEffect(() => {
     fetchData();
-  }, [id]);
+  }, [fetchData]); // Dependency array for useEffect
 
   const updateReportData = async (idDetailActivity: string, data: any) => {
     try {

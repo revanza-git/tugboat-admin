@@ -62,7 +62,7 @@ const Page = (id: any) => {
 
       return () => clearTimeout(timer);
     }
-  }, [isSubmitted, isFailed]);
+  }, [isSubmitted, isFailed, id.id]);
 
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);

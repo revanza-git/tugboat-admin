@@ -155,6 +155,9 @@ const ActivityTableRow = React.memo(
   }
 );
 
+// Explicitly setting the display name for the component
+ActivityTableRow.displayName = "ActivityTableRow";
+
 const ActivityTable = ({
   tugboatActivities,
   shipData,

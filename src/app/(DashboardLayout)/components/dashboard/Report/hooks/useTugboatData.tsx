@@ -1,5 +1,5 @@
 // hooks/useTugboatData.js
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   fetchShipData,
   fetchTugboatActivities,
@@ -13,16 +13,16 @@ const useTugboatData = () => {
     []
   );
 
-  useEffect(() => {
-    fetchData();
-  }, [searchInput]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const shipDataResult = await fetchShipData(); // Assuming this does not depend on searchInput
     const tugboatActivitiesResult = await fetchTugboatActivities(searchInput);
     setShipData(shipDataResult);
     setTugboatActivities(tugboatActivitiesResult);
-  };
+  }, [searchInput]); // Include all dependencies here
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]); // Now 'fetchData' is stable across renders
 
   const handleDeleteShipActivity = async (idShipActivity: any) => {
     try {

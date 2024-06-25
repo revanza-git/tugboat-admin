@@ -57,7 +57,7 @@ const Page = (id: any) => {
 
       return () => clearTimeout(timer);
     }
-  }, [isSubmitted, isFailed]);
+  }, [isSubmitted, isFailed, id.id]);
 
   // Handle change in form fields
   const handleChange = (event: { target: { name: any; value: any } }) => {
