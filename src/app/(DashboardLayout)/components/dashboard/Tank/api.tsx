@@ -1,6 +1,6 @@
 // api.ts
-const BASE_URL = "https://localhost:44317/Tugboat/tank-activity";
-const TANK_URL = "https://localhost:44317/Tugboat/tanks";
+const BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/Tugboat/tank-activity`;
+const TANK_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/Tugboat/tanks`;
 
 export const fetchReport = async (id: string) => {
   const response = await fetch(`${BASE_URL}/${id}`);

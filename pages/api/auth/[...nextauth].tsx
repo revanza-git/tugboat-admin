@@ -20,7 +20,7 @@ const formatUsername = (username: string) => {
 
 const fetchUser = async (username: string) => {
   const response = await fetch(
-    `http://local.api.portal.com/api/User/${username}`
+    `${process.env.NEXT_PUBLIC_PORTAL_API_URL}/api/User/${username}`
   );
 
   if (!response.ok) {
@@ -51,7 +51,7 @@ export default NextAuth({
         }
         try {
           const res = await fetch(
-            `http://local.api.portal.com/api/User/ADAuth`,
+            `${process.env.NEXT_PUBLIC_PORTAL_API_URL}/api/User/ADAuth`,
             {
               method: "POST",
               headers: {

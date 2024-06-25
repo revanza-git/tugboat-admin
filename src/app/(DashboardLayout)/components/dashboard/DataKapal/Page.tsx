@@ -42,7 +42,7 @@ const Page = (id: any) => {
       try {
         const idString = id.id;
         const response = await fetch(
-          `https://localhost:44317/Tugboat/tugboat-activity/${idString}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/Tugboat/tugboat-activity/${idString}`
         );
         const data = await response.json();
         setFetchedData(data);
@@ -84,7 +84,7 @@ const Page = (id: any) => {
     setIsSubmitting(true);
     const idString = id.id;
     // Assuming `id` is available in the current scope
-    const url = `https://localhost:44317/Tugboat/tugboat-activity/${idString}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/Tugboat/tugboat-activity/${idString}`;
 
     fetch(url, {
       method: "PUT",

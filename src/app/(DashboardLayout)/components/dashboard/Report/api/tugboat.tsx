@@ -1,12 +1,14 @@
 // api/tugboat.js
 export const fetchShipData = async () => {
-  const response = await fetch("https://localhost:44317/Tugboat/ships");
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/Tugboat/ships`
+  );
   return await response.json();
 };
 
 export const fetchTugboatActivities = async (searchInput = "") => {
   const response = await fetch(
-    "https://localhost:44317/Tugboat/tugboat-activity"
+    `${process.env.NEXT_PUBLIC_BASE_URL}/Tugboat/tugboat-activity`
   );
   const data = await response.json();
   return data.filter(
@@ -30,7 +32,7 @@ export const fetchTugboatActivities = async (searchInput = "") => {
 };
 
 export const deleteShipActivity = async (idShipActivity: any) => {
-  const url = `https://localhost:44317/Tugboat/tugboat-activity/del/${idShipActivity}`;
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/Tugboat/tugboat-activity/del/${idShipActivity}`;
   try {
     const response = await fetch(url, {
       method: "DELETE", // Specify the method
