@@ -1,21 +1,13 @@
 // pages/api/auth/[...nextauth].tsx
-
-import { result } from "lodash";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 const formatUsername = (username: string) => {
-  let usernameFormatted = username ?? "";
-  if (
-    usernameFormatted?.startsWith("mk.") &&
-    usernameFormatted?.endsWith("@pertamina.com")
-  ) {
-    usernameFormatted = usernameFormatted.split("mk.")[1].split("@")[0];
-  } else {
-    usernameFormatted = usernameFormatted.split("@")[0];
+  if (username.startsWith("mk.")) {
+    return username.substring(3);
   }
-  console.log(usernameFormatted);
-  return usernameFormatted;
+
+  return username;
 };
 
 const fetchUser = async (username: string) => {
@@ -26,7 +18,7 @@ const fetchUser = async (username: string) => {
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
-
+  console.log(username);
   const data = await response.json();
 
   return {
@@ -49,20 +41,18 @@ export default NextAuth({
           console.error("Credentials are not provided");
           return Promise.resolve(null);
         }
+
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_PORTAL_API_URL}/api/User/ADAuth`,
+            `${process.env.NEXT_PUBLIC_PORTAL_API_URL}/api/User/ADAuth?userName=${credentials.username}&password=${credentials.password}`,
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({
-                UserName: credentials.username,
-                Password: credentials.password,
-              }),
             }
           );
+
           if (!res.ok) {
             throw new Error("Network response was not ok");
           }

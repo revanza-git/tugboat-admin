@@ -208,7 +208,7 @@ const Page = ({ id }: { id: string }) => {
                 displayEmpty
               >
                 <MenuItem value="standby">StandBy</MenuItem>
-                <MenuItem value="shifting">Dorong/Tarik</MenuItem>
+                <MenuItem value="dorong">Dorong/Tarik</MenuItem>
                 <MenuItem value="sailing">Sailing</MenuItem>
               </Select>
             </FormControl>

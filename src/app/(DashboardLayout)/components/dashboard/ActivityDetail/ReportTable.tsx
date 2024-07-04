@@ -167,8 +167,8 @@ const ReportTable = ({
             <TableRow>
               <TableCell>Waktu Mulai</TableCell>
               <TableCell>Waktu Selesai</TableCell>
-              <TableCell>Durasi</TableCell>
-              <TableCell>Konsumsi BBM</TableCell>
+              <TableCell>Durasi(Jam)</TableCell>
+              <TableCell>Konsumsi BBM(Liter)</TableCell>
               <TableCell>Keterangan</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>
@@ -276,7 +276,7 @@ const EditReportForm = ({
       />
     </FormControl>
     <FormControl variant="outlined" fullWidth margin="normal">
-      <FormLabel>Konsumsi BBM</FormLabel>
+      <FormLabel>Konsumsi BBM(Liter)</FormLabel>
       <TextField
         name="fuelConsumption"
         value={formValues.fuelConsumption}
@@ -297,7 +297,7 @@ const EditReportForm = ({
       <FormLabel>aktivitas</FormLabel>
       <Select name="note" value={formValues.note} onChange={handleChangeDetail}>
         <MenuItem value="standby">StandBy</MenuItem>
-        <MenuItem value="shifting">Dorong/Tarik</MenuItem>
+        <MenuItem value="dorong">Dorong/Tarik</MenuItem>
         <MenuItem value="sailing">Sailing</MenuItem>
       </Select>
     </FormControl>

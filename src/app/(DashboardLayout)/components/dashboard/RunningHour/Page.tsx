@@ -17,6 +17,7 @@ interface EngineActivity {
   auxiliaryEngine1: string;
   auxiliaryEngine2: string;
   auxiliaryEngine3: string;
+  fifi: string;
 }
 
 const Page = (id: any) => {
@@ -26,6 +27,7 @@ const Page = (id: any) => {
     auxiliaryEngine1: fetchedData ? fetchedData.auxiliaryEngine1 : "",
     auxiliaryEngine2: fetchedData ? fetchedData.auxiliaryEngine2 : "",
     auxiliaryEngine3: fetchedData ? fetchedData.auxiliaryEngine3 : "",
+    fifiEngine: fetchedData ? fetchedData.fifi : "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isFailed, setIsFailed] = useState(false);
@@ -39,6 +41,8 @@ const Page = (id: any) => {
           `${process.env.NEXT_PUBLIC_BASE_URL}/Tugboat/engine-activity/${idString}`
         );
         const data = await response.json();
+
+        console.log(data);
 
         setFetchedData(data);
         setFormValues(data);
@@ -149,6 +153,19 @@ const Page = (id: any) => {
                   variant="outlined"
                   type="time"
                   defaultValue={formValues.auxiliaryEngine3}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Box>
+            <Box flexGrow={1}>
+              <FormControl variant="outlined" fullWidth>
+                <FormLabel component="legend">FIFI (Jam)</FormLabel>
+                <TextField
+                  id="fifiEngine"
+                  name="fifiEngine"
+                  variant="outlined"
+                  type="time"
+                  defaultValue={formValues.fifiEngine}
                   onChange={handleChange}
                 />
               </FormControl>

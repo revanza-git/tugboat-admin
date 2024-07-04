@@ -128,7 +128,7 @@ const Page = (id: any) => {
 
             <Box flexGrow={1}>
               <FormControl variant="outlined" fullWidth>
-                <FormLabel component="legend">Pengisian</FormLabel>
+                <FormLabel component="legend">Pengisian (Liter)</FormLabel>
                 <TextField
                   id="filling"
                   name="filling"
