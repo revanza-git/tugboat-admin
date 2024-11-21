@@ -1,5 +1,4 @@
 import React from "react";
-
 import {
   Card,
   Box,
@@ -30,6 +29,7 @@ import CustomSelect from "../forms/theme-elements/CustomSelect";
 
 const ActivityTimeline = () => {
   const [value, setValue] = React.useState("1");
+  const basePath = process.env.NEXT_PUBLIC_BASEPATH;
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -77,7 +77,10 @@ const ActivityTimeline = () => {
                         boxShadow: "none",
                       }}
                     >
-                      <Avatar src="/images/users/1.jpg" alt="user" />
+                      <Avatar
+                        src={`${basePath}/images/users/1.jpg`}
+                        alt="user"
+                      />
                     </TimelineDot>
                     <TimelineConnector />
                   </TimelineSeparator>
@@ -94,28 +97,28 @@ const ActivityTimeline = () => {
                     <Grid container spacing={3}>
                       <Grid item xs={12} sm={4} lg={3}>
                         <Avatar
-                          src="/images/big/img1.jpg"
+                          src={`${basePath}/images/big/img1.jpg`}
                           alt="bg1"
                           sx={{ borderRadius: 0, width: "100%", height: 135 }}
                         />
                       </Grid>
                       <Grid item xs={12} sm={4} lg={3}>
                         <Avatar
-                          src="/images/big/img2.jpg"
+                          src={`${basePath}/images/big/img2.jpg`}
                           alt="bg1"
                           sx={{ borderRadius: 0, width: "100%", height: 135 }}
                         />
                       </Grid>
                       <Grid item xs={12} sm={4} lg={3}>
                         <Avatar
-                          src="/images/big/img3.jpg"
+                          src={`${basePath}/images/big/img3.jpg`}
                           alt="bg1"
                           sx={{ borderRadius: 0, width: "100%", height: 135 }}
                         />
                       </Grid>
                       <Grid item xs={12} sm={4} lg={3}>
                         <Avatar
-                          src="/images/big/img4.jpg"
+                          src={`${basePath}/images/big/img4.jpg`}
                           alt="bg1"
                           sx={{ borderRadius: 0, width: "100%", height: 135 }}
                         />
@@ -148,7 +151,10 @@ const ActivityTimeline = () => {
                         boxShadow: "none",
                       }}
                     >
-                      <Avatar src="/images/users/2.jpg" alt="user" />
+                      <Avatar
+                        src={`${basePath}/images/users/2.jpg`}
+                        alt="user"
+                      />
                     </TimelineDot>
                     <TimelineConnector />
                   </TimelineSeparator>
@@ -162,7 +168,7 @@ const ActivityTimeline = () => {
                     <Grid container spacing={3}>
                       <Grid item xs={12} sm={4} lg={3}>
                         <Avatar
-                          src="/images/big/img4.jpg"
+                          src={`${basePath}/images/big/img4.jpg`}
                           alt="bg1"
                           sx={{ borderRadius: 0, width: "100%", height: 135 }}
                         />
@@ -214,7 +220,10 @@ const ActivityTimeline = () => {
                         boxShadow: "none",
                       }}
                     >
-                      <Avatar src="/images/users/3.jpg" alt="user" />
+                      <Avatar
+                        src={`${basePath}/images/users/3.jpg`}
+                        alt="user"
+                      />
                     </TimelineDot>
                     <TimelineConnector />
                   </TimelineSeparator>
@@ -264,7 +273,10 @@ const ActivityTimeline = () => {
                         boxShadow: "none",
                       }}
                     >
-                      <Avatar src="/images/users/4.jpg" alt="user" />
+                      <Avatar
+                        src={`${basePath}/images/users/4.jpg`}
+                        alt="user"
+                      />
                     </TimelineDot>
                     <TimelineConnector />
                   </TimelineSeparator>
@@ -301,7 +313,10 @@ const ActivityTimeline = () => {
                         boxShadow: "none",
                       }}
                     >
-                      <Avatar src="/images/users/5.jpg" alt="user" />
+                      <Avatar
+                        src={`${basePath}/images/users/5.jpg`}
+                        alt="user"
+                      />
                     </TimelineDot>
                   </TimelineSeparator>
                   <TimelineContent>
@@ -374,10 +389,10 @@ const ActivityTimeline = () => {
               </Typography>
               <Typography variant="subtitle2" fontSize="12px" mt={2}>
                 Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry&apos;s standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries
+                industry. Lorem Ipsum has been the industry&apos;s standard
+                dummy text ever since the 1500s, when an unknown printer took a
+                galley of type and scrambled it to make a type specimen book. It
+                has survived not only five centuries
               </Typography>
               <Typography variant="subtitle2" fontSize="12px" mt={2}>
                 It was popularised in the 1960s with the release of Letraset

@@ -16,16 +16,22 @@ export const fetchTugboatActivities = async (searchInput = "") => {
       name,
       activityDate,
       author,
+      activity,
+      position,
     }: {
       name: string;
       activityDate: string;
       author: string;
+      activity: string;
+      position: string;
     }) => {
       const lowerCaseSearchInput = searchInput.toLowerCase();
       return (
         (name && name.toLowerCase().includes(lowerCaseSearchInput)) ||
         (activityDate && activityDate.includes(lowerCaseSearchInput)) ||
-        (author && author.toLowerCase().includes(lowerCaseSearchInput))
+        (author && author.toLowerCase().includes(lowerCaseSearchInput)) ||
+        (activity && activity.toLowerCase().includes(lowerCaseSearchInput)) ||
+        (position && position.toLowerCase().includes(lowerCaseSearchInput))
       );
     }
   );

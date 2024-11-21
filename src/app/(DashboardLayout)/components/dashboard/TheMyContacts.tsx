@@ -40,6 +40,8 @@ const contacts = [
 ];
 
 const MyContacts = () => {
+  const basePath = process.env.NEXT_PUBLIC_BASEPATH;
+
   return (
     <>
       <Card variant="outlined" sx={{ p: 0 }}>
@@ -68,7 +70,7 @@ const MyContacts = () => {
                         },
                       }}
                     >
-                      <Avatar src={contact.img} alt="1" />
+                      <Avatar src={`${basePath}${contact.img}`} alt="1" />
                     </Badge>
                   </ListItemAvatar>
                   <ListItemText

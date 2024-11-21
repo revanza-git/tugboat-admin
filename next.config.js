@@ -1,4 +1,11 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+require("dotenv").config();
 
-module.exports = nextConfig
+const nextConfig = {
+  basePath: process.env.NEXT_PUBLIC_BASEPATH,
+  env: {
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+  },
+};
+
+module.exports = nextConfig;

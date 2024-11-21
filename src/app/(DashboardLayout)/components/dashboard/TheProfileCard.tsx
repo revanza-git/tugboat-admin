@@ -6,23 +6,24 @@ import {
   Typography,
   Stack,
   Avatar,
-  IconButton,
   Button,
 } from "@mui/material";
 import { IconClock, IconMessageCircle2 } from "@tabler/icons-react";
 
 const ProfileCard = () => {
+  const basePath = process.env.NEXT_PUBLIC_BASEPATH;
+
   return (
     <Card variant="outlined" sx={{ p: 0 }}>
       <CardMedia
         sx={{ height: 225 }}
-        image="/images/backgrounds/login-register.jpg"
+        image={`${basePath}/images/backgrounds/login-register.jpg`}
         title="green iguana"
       />
       <CardContent>
         <Box textAlign="center" mt="-80px">
           <Avatar
-            src="/images/users/1.jpg"
+            src={`${basePath}/images/users/1.jpg`}
             sx={{ width: 100, height: 100, m: "0 auto" }}
           />
           <Typography variant="h5" mt={4}>

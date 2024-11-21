@@ -10,10 +10,12 @@ const LinkStyled = styled(Link)(() => ({
 }));
 
 const Logo = () => {
+  const basePath = process.env.NEXT_PUBLIC_BASEPATH;
+
   return (
     <LinkStyled href="/">
       <Image
-        src="/images/logos/nr-logo.png"
+        src={`${basePath}/images/logos/nr-logo.png`}
         alt="logo"
         height={64}
         width={174}

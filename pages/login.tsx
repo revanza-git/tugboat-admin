@@ -9,15 +9,10 @@ import {
   styled,
 } from "@mui/material";
 
-import {
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getSession, signIn } from "next-auth/react";
-import router from "next/router";
+import { useRouter } from "next/router";
+
 const StyledCard = styled(Card)({
   boxShadow: "none",
   paddingTop: "3rem",
@@ -44,12 +39,14 @@ const StyledImg = styled("img")({
 });
 
 export default function Login() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const passwordFieldRef = useRef<HTMLInputElement>(null);
   const [buttonWidth, setButtonWidth] = useState<number | undefined>(undefined);
   const [authFailed, setAuthFailed] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // New state for loading indicator
+  const [callbackUrl, setCallbackUrl] = useState("");
 
   useEffect(() => {
     if (passwordFieldRef.current) {
@@ -64,6 +61,15 @@ export default function Login() {
       document.body.style.padding = "";
     };
   }, []);
+
+  useEffect(() => {
+    if (router.query.callbackUrl) {
+      setCallbackUrl(router.query.callbackUrl as string);
+    }
+    if (router.query.error) {
+      setAuthFailed(true);
+    }
+  }, [router.query.callbackUrl, router.query.error]);
 
   const handleUsernameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,28 +89,34 @@ export default function Login() {
     (event: React.FormEvent) => {
       event.preventDefault();
       setIsLoading(true); // Start loading
-      signIn("credentials", { username, password })
+      signIn("credentials", {
+        username,
+        password,
+        callbackUrl, // Ensure callbackUrl includes base path
+      })
         .then((result) => {
           if (result && result.error) {
+            console.error("Login error:", result.error); // Log the error
             setAuthFailed(true);
           } else {
             getSession().then((session) => {
               if (session === null) {
                 setAuthFailed(true);
               } else {
-                router.push("/");
+                router.push(callbackUrl);
               }
             });
           }
         })
         .catch((error) => {
+          console.error("Login error:", error); // Log the error
           setAuthFailed(true);
         })
         .finally(() => {
           setIsLoading(false); // Stop loading regardless of the outcome
         });
     },
-    [username, password]
+    [username, password, callbackUrl, router]
   );
 
   return (
@@ -115,12 +127,12 @@ export default function Login() {
         alignItems="center"
         style={{
           height: "100vh",
-          backgroundImage: "url('/images/backgrounds/nr-bg.png')",
+          backgroundImage: "url('images/backgrounds/nr-bg.png')",
           backgroundRepeat: "no-repeat",
           backgroundSize: "contain", // Change this line
         }}
       >
-        <StyledImg src="/images/logos/nr-logo.png" alt="Logo" />
+        <StyledImg src="images/logos/nr-logo.png" alt="Logo" loading="lazy" />
 
         <Grid item xs={12} sm={8} md={6} lg={4}>
           <StyledCard>

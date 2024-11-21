@@ -9,6 +9,8 @@ const Profile = () => {
   const loading = status === "loading";
   const [anchorEl2, setAnchorEl2] = useState(null);
   const router = useRouter();
+  const basePath = process.env.NEXT_PUBLIC_BASEPATH;
+
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
   };
@@ -36,7 +38,7 @@ const Profile = () => {
         onClick={handleClick2}
       >
         <Avatar
-          src={"/images/users/1.jpg"}
+          src={`${basePath}/images/users/1.jpg`}
           alt={"ProfileImg"}
           sx={{
             width: 35,
