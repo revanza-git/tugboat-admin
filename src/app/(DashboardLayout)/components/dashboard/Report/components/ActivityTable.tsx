@@ -186,8 +186,10 @@ const ActivityTable = ({
   const handlePreviousPage = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
   };
-  // Create ship code to name mapping
   const shipCodeToNameMap = React.useMemo(() => {
+    if (!Array.isArray(shipData)) {
+      return {};
+    }
     return shipData.reduce((acc, ship) => {
       acc[ship.shipCode] = ship.shipName || "Unknown";
       return acc;
@@ -196,47 +198,56 @@ const ActivityTable = ({
 
   return (
     <>
-      <TableContainer component={Paper}>
-        <Table aria-label="simple table">
+      <TableContainer
+        component={Paper}
+        sx={{
+          borderRadius: 2,
+          overflow: "hidden",
+          boxShadow: 3,
+          my: 1,
+          p: 2,
+        }}
+      >
+        <Table size="small" aria-label="compact table">
           <TableHead>
-            <TableRow>
+            <TableRow sx={{ backgroundColor: "grey.100" }}>
               <TableCell>
-                <Typography color="textSecondary" variant="h6">
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   ID
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography color="textSecondary" variant="h6">
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   Nama Pelapor
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography color="textSecondary" variant="h6">
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   Tanggal Aktivitas
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography color="textSecondary" variant="h6">
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   Nama Kapal
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography color="textSecondary" variant="h6">
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   Aktivitas
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography color="textSecondary" variant="h6">
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   Posisi
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography color="textSecondary" variant="h6">
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   Tanggal Input
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography color="textSecondary" variant="h6">
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   Actions
                 </Typography>
               </TableCell>
@@ -255,11 +266,20 @@ const ActivityTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      <Box display="flex" justifyContent="center" m={2}>
-        <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
+
+      <Box display="flex" justifyContent="center" sx={{ mt: 2 }}>
+        <Button
+          variant="contained"
+          size="small"
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          sx={{ mr: 1 }}
+        >
           Previous
         </Button>
         <Button
+          variant="contained"
+          size="small"
           onClick={handleNextPage}
           disabled={currentPage * itemsPerPage >= tugboatActivities.length}
         >

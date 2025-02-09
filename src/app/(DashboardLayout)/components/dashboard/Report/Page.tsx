@@ -1,13 +1,12 @@
-// Report/Page.tsx
-import React, { useState } from "react";
+import React from "react";
 import BaseCard from "../../shared/DashboardCard";
 import SearchBar from "./components/SearchBar";
-import ActivityTable from "./components/ActivityTable"; // Ensure this path is correct
+import ActivityTable from "./components/ActivityTable";
 import useTugboatData from "./hooks/useTugboatData";
-import { useRouter } from "next/navigation"; // Corrected import based on provided context
+import { useRouter } from "next/navigation";
 
 const Page = () => {
-  const router = useRouter(); // Corrected based on standard Next.js routing
+  const router = useRouter();
 
   const {
     tugboatActivities,
